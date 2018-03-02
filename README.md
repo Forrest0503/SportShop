@@ -5,6 +5,7 @@
 * Django 1.8
 * Pillow
 * Jieba
+* Bootstrap
 
 
 ## 实现功能
