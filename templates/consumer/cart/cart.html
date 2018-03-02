@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>购物车</title>
+
+    <!-- Bootstrap -->
+    {% load static %}
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/shop-item.css' %}" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 70px;
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/Goods/home_page">运动商城</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    {% if user.name %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" style='color:white'>您好,{{user.name}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Goods/cart" style='color:white'>购物车</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Goods/order" style='color:white'>我的订单</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Goods/editInfo" style='color:white'>个人中心</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/User/logout" style='color:white'>退出登录</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/User/login" style='color:white'>请登录</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/User/signup" style='color:white'>立即注册</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="notice_index" class="container">
+        <div>
+            <h1>购物车</h1>
+        </div>
+        <!--商品列表-->
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                编号
+                            </th>
+                            <th>
+                                商品信息
+                            </th>
+                            <th>
+                                商品单价
+                            </th>
+                            <th>
+                                商品数量
+                            </th>
+                            <th>
+                                颜色
+                            </th>
+                            <th>
+                                尺寸
+                            </th>
+                            <th>
+                                删除
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for good in good_list %}
+                        <tr>
+                            <td>
+                                {{forloop.counter}}
+                            </td>
+                            <td>
+                                <span>
+                                    <img alt="item.name" src="{{good.1.picture.url}}" class="img-rounded noticemin" width="100px" />
+                                </span>
+                                <span>
+                                    <strong style="font-size: 14px">{{good.1.name}}</strong>
+                                </span>
+                            </td>
+                            <td>
+                                {{good.1.price}}
+                            </td>
+                            <td>
+                                <!-- <input disabled min='1' type='number' class='form-control' style='width: 100px' value='{{good.0.quantity}}' max='{{good.1.inventory}}'> -->
+                                {{good.0.quantity}}
+                            </td>
+                            <td>
+                                {{good.0.color}}
+                            </td>
+                            <td>
+                                {{good.0.size}}
+                            </td>
+                            <td>
+                                <a id="modal-418866" href="/Goods/remove_from_cart?shopping_id={{good.0.id}}" role="button" class="btn" data-toggle="modal">删除</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <form method='POST' action='/Goods/cart?total_price={{total_price}}'>
+            {% csrf_token %}
+            <div id="check_shipping" class="container">
+                <h4>收货人信息：</h4>
+                {% if address %}
+                <div>
+                    <label style='font-size: 16px'>默认收货地址：{{address}}</label>
+                </div>
+                {% else %}
+                <div>
+                    <label style='font-size: 16px' class="text-danger">系统检测到你还没有收货地址!</label>
+                </div>
+                <input name='address' type="text" placeholder="请填写收货地址"></input>
+                <!-- <label style='font-size: 20px'>收货地址：xxxxxxxx</label> -->
+                {% endif %}
+                {% if phone %}
+                <div>
+                    <label style='font-size: 16px'>默认联系电话：{{phone}}</label>
+                </div>
+                {% else %}
+                <div>
+                    <label style='font-size: 16px' class="text-danger">系统检测到你还没有联系电话!</label>
+                </div>
+                <input name='phone' type="text" placeholder="请填写联系电话"></input>
+                <!-- <label style='font-size: 20px'>收货地址：xxxxxxxx</label> -->
+                {% endif %}
+            </div>
+
+            <div align="right">
+                <div class="col-sm-4 column text-center">
+                    <span class="text-lg" style='font-size: 20px'>总价：{{total_price}} </span>
+                    {% if good_list %}
+                    <button type="submit" class="btn btn-danger btn btnaccounts">
+                        结算
+                    </button>
+                    {% else %}
+                    <button type="submit" class="btn btn-danger btn btnaccounts" disabled>
+                        结算
+                    </button>
+                    {% endif %}
+                    <!-- <a href='/Goods/cart?' role='button' class="btn btn-danger btn-lg" style="margin-top:20px; color: white">结算</a> -->
+                </div>
+            </div>
+        </form>
+        {% if error %}
+        <div>
+            {{error}}
+        </div>
+        {% endif %}
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+        <!--vue.js-->
+</body>
+
+</html>

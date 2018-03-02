@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>商品详情</title>
+
+  <!-- Bootstrap core CSS -->
+  {% load static %}
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/shop-item.css' %}" rel="stylesheet">
+
+  <style>
+    body {
+      padding-top: 60px;
+    }
+
+    .divbox {
+      width: 500px;
+      height: 300px;
+      background-color: #f00;
+      color: #fff;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-inverse bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/Goods/home_page" style='color:white'>运动商城</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          {% if user.name %}
+          <li class="nav-item">
+            <a class="nav-link" href="/Goods/editInfo" style='color:white'>您好,{{user.name}}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/Goods/cart" style='color:white'>购物车</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/Goods/order" style='color:white'>我的订单</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/Goods/editInfo" style='color:white'>个人中心</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/User/logout" style='color:white'>退出登录</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="/User/login" style='color:white'>请登录</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/User/signup" style='color:white'>立即注册</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  {% if good %}
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <div class="row">
+      <!-- 商品展示 -->
+      <div class="col-md-9">
+        <div class="card mt-4">
+          <img class="card-img-top img-fluid" src="{{good.picture.url}}" alt="">
+          <div class="card-body">
+            <h1 class="card-title">{{good.name}}</h3>
+              <hr>
+              <h4 style="color: red">￥{{good.price}}</h4>
+              <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
+              4.0 stars
+          </div>
+        </div>
+        <!-- /.card -->
+
+        <div class="card card-outline-secondary my-4">
+          <div class="card-header">
+            商品详情
+          </div>
+          <div class="card-body">
+            <pre><p style='font-size: 18px'>{{good.detail}}</p></pre>
+            <small class="text-muted">{{good.onsale_time}}</small>
+
+          </div>
+        </div>
+
+        <div class="card card-outline-secondary my-4">
+          <div class="card-header">
+            商品评论
+          </div>
+          <div class="card-body">
+            <p>好评.</p>
+            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            <hr>
+            <p>可以的</p>
+            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            <hr>
+            <p>该用户未填写评论.</p>
+            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            <hr>
+            <a href="#" class="btn btn-success">写评论</a>
+          </div>
+        </div>
+        <!-- /商品展示 -->
+
+      </div>
+      <!-- 商品价格 -->
+      
+      <div class="col-md-3 " style="z-index: 9999; position: fixed ! important; right: 10px; top: 60px;">
+        <p id="name" style="font-size:20px"></p>
+        <p id="subtitle" style="font-size:15px;color:#e4393c"></p>
+
+        <div style="margin-top:20px">
+          <span class="m-label">价格:</span>
+          <span class="p-price">
+            <span>￥</span>
+            <span id="price" style="font-size:25px">{{good.price}}</span>
+          </span>
+        </div>
+
+        <div style="margin-top:20px">
+          <span class="m-label">库存:</span>
+          <span id="stock">{{good.inventory}}</span>
+        </div>
+
+        <form method='POST' action='/Goods/add_to_cart/?commodity_id={{good.id}}&user_id={{user.id}}'>
+          {% csrf_token %} {% if size %}
+          <div class="row" style="margin-top:20px">
+            <div class="col-md-3">
+              <span class="m-label">尺寸:</span>
+            </div>
+            <div class="col-md-4">
+              <div class="input-group input-group-sm" style="margin-left: -20px">
+                <!-- <div id="category" class="col-md-12"> -->
+                <select id="selectA" class="form-control cate-select col-md-12" name='size' style="width:200px">
+                  {% for item in size %}
+                  <option value='{{item}}'>{{item}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+            </div>
+          </div>
+          {% endif %} {% if color %}
+          <div class="row" style="margin-top:20px">
+            <div class="col-md-3">
+              <span class="m-label">颜色:</span>
+            </div>
+            <div class="col-md-4">
+              <div class="input-group input-group-sm" style="margin-left: -20px">
+                <select id="selectA" class="form-control cate-select col-md-12" name='color' style="width:200px">
+                  {% for item in color %}
+                  <option value='{{item}}'>{{item}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="row" style="margin-top:20px">
+            <div class="col-md-3">
+              <span class="m-label">数量:</span>
+            </div>
+            <div class="col-md-4">
+              <div class="input-group input-group-sm" style="margin-left: -20px">
+                <input name='quantity' type="number" class="form-control" min="1" value="1" max='{{good.inventory}}'>
+              </div>
+            </div>
+          </div>
+
+          <!-- <a href='/Goods/add_to_cart?' role='button' class="btn btn-danger btn-lg" style="margin-top:20px; color: white" name='add_to_cart'>加入购物车</a> -->
+          <button type="submit" class="btn btn-danger btn-lg" style="margin-top:20px" name='add_to_cart'>加入购物车</button>
+        </form>
+        {% if success %}
+        <label>{{success}}</label>
+        {% endif %} {% if error %}
+        <label>{{error}}</label>
+        {% endif %}
+      </div>
+
+      <!-- /商品价格 -->
+    </div>
+
+  </div>
+  {% else %}
+  <h1>商品未找到</h1>
+  {% endif %}
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2017</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
