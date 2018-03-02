@@ -3,6 +3,7 @@
 ## 依赖库
 * Python 2.7
 * Django 1.8
+* MySQL
 * Pillow
 * Jieba
 * Bootstrap
@@ -47,7 +48,6 @@
 * 收货地址管理
 
 
-
 ## 项目配置
 ### 创建虚拟环境（可选）
 
@@ -70,19 +70,27 @@ source env/bin/activate
 ```
 
 ### 数据库
+1. 创建数据库
+```
+mysql -u YOURUSERNAME -p
+mysql> create database SportShop;
+```
 
-创建并同步数据模型 
+2. 创建并同步数据模型
 ```
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+3. 修改SportShop/settings.py中的数据库配置
+
 
 ### 设置URL路由
 
 修改settings.py
 
 ### 静态文件配置
-1. 在settings.py中添加 STATIC_URL = '/static/'
+1. 在SportShop/settings.py中添加 STATIC_URL = '/static/'
 2. 在SportShop根目录下添加static文件夹，用于放置静态文件
 3. 在模板中引用静态文如下	
 
@@ -94,7 +102,7 @@ python manage.py migrate
 ```
 
 ### 媒体文件配置
-1. 在settings.py中添加 STATIC_URL = '/static/'
+1. 在SportShop/settings.py中添加 STATIC_URL = '/static/'
 
 ```
 MEDIA_ROOT = 'media/'
